@@ -1,14 +1,18 @@
 server:
   ingress:
     enabled: false
-    host: example.com
+    host: {} # example.com
     tls:
       enabled: false
-    certManager:
-      enabled: false
-      issuer: letsencrypt
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "6000"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "6000"
 
 machine-learning:
+  pvc:
+    enabled: false
+    size: 10Gi
 
 postgres:
 

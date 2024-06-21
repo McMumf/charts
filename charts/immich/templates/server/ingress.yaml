@@ -4,13 +4,12 @@ kind: Ingress
 metadata:
   name: immich
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
   annotations:
-    {{- if .Values.server.ingress.certManager.enabled }}
-    cert-manager.io/cluster-issuer: {{ .Values.server.ingress.certManager.issuer }}
+    {{- with .Values.server.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "6000"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "6000"
 spec:
   ingressClassName: nginx
   tls:

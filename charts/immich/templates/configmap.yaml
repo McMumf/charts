@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: immich-env
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
 data:
   DB_DATABASE_NAME: immich
   DB_HOSTNAME: immich-postgres.{{ .Release.Namespace }}.svc.cluster.local

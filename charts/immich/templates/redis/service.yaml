@@ -4,6 +4,7 @@ metadata:
   name: immich-redis
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "common.labels" . | nindent 4 }}
     app: immich-redis
 spec:
   type: ClusterIP

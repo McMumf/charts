@@ -4,6 +4,7 @@ metadata:
   name: immich-ml-cache
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "common.labels" . | nindent 4 }}
     app: immich-ml
 spec:
   storageClassName: longhorn

@@ -4,6 +4,7 @@ metadata:
   name: immich-postgres
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "common.labels" . | nindent 4 }}
     app: immich-postgres
 spec:
   type: ClusterIP
