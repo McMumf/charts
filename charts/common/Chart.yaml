@@ -1,0 +1,16 @@
+apiVersion: v2
+name: common
+description: A library helm chart focused on grouping together common logic
+version: 1.0.0
+appVersion: 1.0.0
+type: library
+
+home: https://github.com/mcmumf/charts/
+
+maintainers:
+  - name: mcmumf
+    url: https://github.com/mcmumf
+
+keywords:
+  - common
+  - library
