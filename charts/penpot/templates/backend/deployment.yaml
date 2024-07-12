@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "penpot.fullname" . }}-backend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "penpot.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.backend.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "penpot.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "penpot.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.backend.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-backend
+          securityContext:
+            {{- toYaml .Values.backend.securityContext | nindent 12 }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits: {}
+            requests: {}
+          ports:
+            - name: http
+              containerPort: {{ .Values.backend.service.port }}
+              protocol: TCP
+          env:
+            - name: "PENPOT_FLAGS"
+              value: "enable-registration enable-login-with-password disable-email-verification enable-smtp enable-prepl-server"
+            - name: "PENPOT_SECRET_KEY"
+              value: "my-insecure-key"
+            - name: "PENPOT_PUBLIC_URI"
+              value: "http://localhost:9001"
+            - name: "PENPOT_DATABASE_URI"
+              value: "postgresql://penpot-postgres/penpot"
+            - name: "PENPOT_DATABASE_USERNAME"
+              value: "penpot"
+            - name: "PENPOT_DATABASE_PASSWORD"
+              value: "penpot"
+            - name: "PENPOT_REDIS_URI"
+              value: "redis://penpot-redis/0"
+            - name: "PENPOT_ASSETS_STORAGE_BACKEND"
+              value: "assets-fs"
+            - name: "PENPOT_STORAGE_ASSETS_FS_DIRECTORY"
+              value: "/opt/data/assets"
+            - name: "PENPOT_TELEMETRY"
+              value: "FALSE"
+            - name: "PENPOT_SMTP_DEFAULT_FROM"
+              value: "no-reply@example.com"
+            - name: "PENPOT_SMTP_DEFAULT_REPLY_TO"
+              value: "no-reply@example.com"
+            - name: "PENPOT_SMTP_HOST"
+              value: "penpot-mailcatch"
+            - name: "PENPOT_SMTP_PORT"
+              value: "1025"
+            - name: "PENPOT_SMTP_USERNAME"
+              value: ""
+            - name: "PENPOT_SMTP_PASSWORD"
+              value: ""
+            - name: "PENPOT_SMTP_TLS"
+              value: ""
+            - name: "PENPOT_SMTP_SSL"
+              value: ""
+          volumeMounts:
+            - name: assets
+              mountPath: /opt/data/assets
+      volumes:
+        - name: assets
+          persistentVolumeClaim:
+            claimName: {{ include "penpot.fullname" . }}-assets
+
