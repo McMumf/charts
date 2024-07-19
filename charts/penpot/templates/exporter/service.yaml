@@ -5,12 +5,12 @@ metadata:
     kompose.cmd: C:\Users\mccaf\go\bin\kompose.exe convert
     kompose.version: 1.34.0 (HEAD)
   labels:
-    io.kompose.service: penpot-backend
-  name: penpot-backend
+    io.kompose.service: penpot-exporter
+  name: penpot-exporter
 spec:
   ports:
     - name: "80"
       port: 80
       targetPort: 80
   selector:
-    io.kompose.service: penpot-backend
+    io.kompose.service: penpot-exporter
